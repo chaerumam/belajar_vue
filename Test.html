@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="files/js/jquery.min.js"></script>
+    <script src="files/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="files/bootstrap/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+        
+    <div id="app" class="container mt-5">
+        <h1>Product</h1>
+        <form @submit.prevent="add">
+            <div class="form-group">
+                Product Name
+                <input type="text" v-model="name" class="form-control"placeholder="Put the name of product"></div>
+                <div class="alert alert-danger" v-if="this.errors.name">{{this.errors.name}}</div>
+            <div class="form-group">
+                Price
+                <input type="number" min="0" v-model="price" class="form-control" ></div>
+                <div class="alert alert-danger" v-if="this.errors.price">{{this.errors.price}}</div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Add</button></div>
+        </form>
+        <div>
+            <input type="text" v-model="keyword" placeholder="Type to search" class="form-control mr-sm-2">
+        </div>
+        <!-- <form >
+            <input class="search" type="text" placeholder="cari data">
+            <input class="button" type="button" value="Search">
+        </form> -->
+        
+        <!-- <div class="spinner-grow text-primary" role="status" v-if="loading">
+        <span class="sr-only">Loading...</span>
+        </div> -->
+
+        <table class="table" v-if="!loading">
+            <tr>
+                <td>#</td>
+                <td>Nama</td>
+                <td>Harga</td>
+            </tr>
+            <tr v-for="(item, index) in cari" :key="item.id">
+                <td>{{ ++index}}</td>
+                <td>{{ item.name }}</td>
+                <td>Rp{{ item.price }}</td>
+                <td>
+                        <button
+                        @click="edit(item)"
+                        class="btn btn-warning"
+                        >
+                        <span class="btn btn-warning"></span>
+                    </button>
+                    </td>
+                <td>
+                    <button
+                        @click="remove(item)"
+                        class="btn btn-danger"
+                    >&times;
+                    </button>
+                </td>
+                
+            </tr>
+            <tr>
+                    <td></td>
+                    <td>TOTAL</td>
+                    <td>Rp{{total}}</td>
+                </tr>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- <script src="https://unpkg.com/axios/dist/axios.js"></script> -->
+    <script>
+        new Vue({
+            el: '#app',
+            
+            // async mounted() {
+            //     this.loading = true
+            //     const response = await axios.get('http://cfc40bbc.ngrok.io/api/items')
+            //     this.items = response.data
+            //     this.loading = false
+            // },
+            
+            data() {
+                return {
+                    loading: false,
+                    errors:[],
+                    name: '',
+                    keyword:'',
+                    price: '',
+                    items: [
+                        {id:"1", name:"Apel", price:"15000"},
+                        {id:"2", name:"Jeruk", price:"16000"},
+                        {id:"3", name:"Pisang", price:"25000"},
+                        {id:"4", name:"Terong", price:"5000"},
+                        {id:"5", name:"cabe", price:"8100"},
+
+                    ]
+                }
+            },
+
+            computed:{
+                total(){
+                    return this.items
+                    .map(item => Number(item.price))
+                    .reduce((prev, current) => prev + current, 0)
+                },
+                cari(keyword){
+                    if(this.keyword){
+                        return this.items
+                        .filter((item)=>{
+                            return item.nama.startsWith(this.keyword);
+                        })
+                    }
+                    else {
+                        return this.items;
+                    }
+                },
+            },
+
+            methods: 
+            {
+                add()
+                {
+                    this.errors={}
+                    if (this.name.trim() === ''){
+                        this.errors.name = 'nama harus diisi'
+                    }
+                    if (this.price <= 0){
+                        this.errors.price = 'harga harus diatas Rp.1'
+                    }
+                    if (Object.values(this.errors).length > 0) {
+                        return
+                    }
+
+
+                    this.items.push({
+                        id: Date.now(),
+                        name: this.name,
+                        price: this.price,
+                    })
+                    this.name = ''
+                    this.price = ''
+                },
+                edit(item){
+                    this.updateSubmit = true
+                    this.items.name = this.name
+                    this.items.price = this.price
+
+                },
+
+                remove(item){
+                    const index = this.items.indexOf(item)
+                    this.items.splice()
+                },
+
+                search(item){
+                    const index = this.items.indexOf(item)
+                    this.items.find()
+                },
+            }
+
+        })
+    </script>
+</body>
+</html>
